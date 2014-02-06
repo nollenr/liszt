@@ -42,3 +42,5 @@ development:
   database: lisztdb
   pool: 5
   username: liszt
+  password: liszt
+

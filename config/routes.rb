@@ -1,4 +1,20 @@
 Liszt::Application.routes.draw do
+
+  root to: 'static_pages#home'
+  get '/home', to: 'static_pages#home'
+    
+  resources :users, except: [:destroy]
+  get '/signup', to: 'users#new'
+
+  resources :sessions, only: [:new, :create, :destroy]
+  get    '/signin',  to: 'sessions#new'
+  delete '/signout', to: 'sessions#destroy'
+  
+  resources :recipes, except: [:destroy]  
+
+  # match '/help', to: 'static_pages#help'
+  # match '/about', to: 'static_pages#about'
+  
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

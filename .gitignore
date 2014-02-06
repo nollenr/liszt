@@ -17,4 +17,5 @@ doc/
 .idea
 
 # config/database.yml*
-
+# Ignore files uploaded to the application
+public/system/recipes/*

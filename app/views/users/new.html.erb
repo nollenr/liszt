@@ -1,0 +1,25 @@
+<% provide(:title, 'Sign up') %>
+
+<div class="jumbotron">
+  <h1>Sign Up</h1>
+</div>
+
+<div class="row">
+  <div class="col-md-10 col-md-offset-2">
+    <%= simple_form_for(@user) do |f| %>
+      <%= render 'shared/error_messages', object: f.object %>
+
+      <%= f.input :username, label: "Username (lowercase)" %>
+
+      <%= f.input :email %>
+
+      <%= f.input :password %>
+
+      <%= f.input :password_confirmation %>
+
+      <%= f.button :submit, "Save", class: "btn btn-large btn-primary" %>
+      <%= link_to "Cancel", users_path, class: 'btn btn-large' %>
+
+    <% end %>
+  </div>
+</div>

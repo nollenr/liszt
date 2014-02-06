@@ -1,0 +1,17 @@
+@import "bootstrap";
+
+/* ************************************************* */
+/* Fix for iPhone dropdown navbar                    */
+/* see https://github.com/twbs/bootstrap/issues/7968 */
+/* ************************************************* */
+.dropdown-backdrop {
+  position: static;
+}
+
+/* ********************************************** */
+/* Site-Wide                                      */
+/* ********************************************** */
+.jumbotron {
+  @include gradient-vertical(#241970, #432de1, 0%, 90%);
+  color: white;
+}
