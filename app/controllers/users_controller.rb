@@ -1,6 +1,9 @@
 class UsersController < ApplicationController
   # rails g scaffold user username:string email:string password_digest:string remember_token:string --fixtures=false
   before_action :set_user, only: [:show, :edit, :update, :destroy]
+  
+  before_filter :signed_in_user, only: [:edit, :update, :index]
+  before_filter :correct_user, only: [:edit, :update]
 
   # GET /users
   def index
@@ -58,4 +61,13 @@ class UsersController < ApplicationController
     def user_params
       params.require(:user).permit(:email, :username, :password, :password_confirmation)
     end
+    
+    # Check if this is the "correct" user before we allow edits and updatese
+    def correct_user
+      @user = User.find(params[:id])
+      unless current_user?(@user)
+        redirect_to root_path, notice: "Cannot edit another user's profile"
+      end
+    end
+
 end

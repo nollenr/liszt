@@ -1,5 +1,7 @@
 class User < ActiveRecord::Base
   has_secure_password
+  
+  has_many :recipes
 
   before_save { self.email = email.downcase }
   before_save { self.username = username.downcase}

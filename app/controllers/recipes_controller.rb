@@ -1,11 +1,12 @@
 class RecipesController < ApplicationController
   # rails g scaffold Recipe --no-test-framework
   
-  before_action :set_recipe, only: [:show, :edit, :update, :destroy]
+  before_filter :signed_in_user
+  before_action :set_recipe, only: [:show, :edit, :update]
 
   # GET /recipes
   def index
-    @recipes = Recipe.all
+    @recipes = current_user.recipes.all
   end
 
   # GET /recipes/1
@@ -23,7 +24,7 @@ class RecipesController < ApplicationController
 
   # POST /recipes
   def create
-    @recipe = Recipe.new(recipe_params)
+    @recipe = current_user.recipes.new(recipe_params)
 
     if @recipe.save
       @recipe.delay.ocrize_the_recipe
@@ -45,11 +46,11 @@ class RecipesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_recipe
-      @recipe = Recipe.find(params[:id])
+      @recipe = current_user.recipes.find(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.
     def recipe_params
-      params[:recipe].permit(:name, :recipe_source, :recipe_source_desc, :pre_process_attachment, :post_process_attachment)
+      params[:recipe].permit(:name, :recipe_source, :recipe_source_desc, :original_attachment, :intermediate_process_attachment, :post_process_attachment)
     end
 end

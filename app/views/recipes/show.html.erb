@@ -1,6 +1,6 @@
 <p id="notice"><%= notice %></p>
 
-<%= render file: @recipe.post_process_attachment.path %>
-
+<%= content_tag(:p, @recipe.name) %>
+<%= render file: @recipe.post_process_attachment.path unless @recipe.post_process_attachment_file_name.nil? %>
 <%= link_to 'Edit', edit_recipe_path(@recipe) %> |
 <%= link_to 'Back', recipes_path %>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140206221013) do
+ActiveRecord::Schema.define(version: 20140207180005) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,25 +33,32 @@ ActiveRecord::Schema.define(version: 20140206221013) do
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
   create_table "recipes", force: true do |t|
-    t.string   "name",                                 limit: 40, null: false
-    t.string   "recipe_source",                        limit: 30
-    t.string   "recipe_source_desc",                   limit: 90
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "pre_process_attachment_file_name"
-    t.string   "pre_process_attachment_content_type"
-    t.integer  "pre_process_attachment_file_size"
-    t.datetime "pre_process_attachment_updated_at"
+    t.string   "name",                                         limit: 40, null: false
+    t.integer  "user_id",                                                 null: false
+    t.string   "recipe_source",                                limit: 30
+    t.string   "recipe_source_desc",                           limit: 90
+    t.string   "original_attachment_file_name"
+    t.string   "original_attachment_content_type"
+    t.integer  "original_attachment_file_size"
+    t.datetime "original_attachment_updated_at"
+    t.string   "intermediate_process_attachment_file_name"
+    t.string   "intermediate_process_attachment_content_type"
+    t.integer  "intermediate_process_attachment_file_size"
+    t.datetime "intermediate_process_attachment_updated_at"
     t.string   "post_process_attachment_file_name"
     t.string   "post_process_attachment_content_type"
     t.integer  "post_process_attachment_file_size"
     t.datetime "post_process_attachment_updated_at"
     t.text     "attachment_as_text"
-    t.datetime "processing_start_time"
-    t.datetime "processing_end_time"
+    t.text     "attachment_processing_output"
+    t.datetime "attachment_processing_starttime"
+    t.datetime "attachment_processing_endtime"
+    t.boolean  "attachment_processing_successful"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  add_index "recipes", ["name"], name: "index_recipes_on_name", unique: true, using: :btree
+  add_index "recipes", ["user_id", "name"], name: "index_recipes_on_user_id_and_name", unique: true, using: :btree
 
   create_table "users", force: true do |t|
     t.string   "username",        limit: 35, null: false
