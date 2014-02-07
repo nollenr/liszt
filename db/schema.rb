@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140204231844) do
+ActiveRecord::Schema.define(version: 20140206221013) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,6 +47,8 @@ ActiveRecord::Schema.define(version: 20140204231844) do
     t.integer  "post_process_attachment_file_size"
     t.datetime "post_process_attachment_updated_at"
     t.text     "attachment_as_text"
+    t.datetime "processing_start_time"
+    t.datetime "processing_end_time"
   end
 
   add_index "recipes", ["name"], name: "index_recipes_on_name", unique: true, using: :btree
