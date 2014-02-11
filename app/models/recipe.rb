@@ -7,7 +7,7 @@ class Recipe < ActiveRecord::Base
   
   belongs_to :user
   
-  has_attached_file :original_attachment
+  has_attached_file :original_attachment, :styles => { :thumbnail => "150x150>" }
   has_attached_file :intermediate_process_attachment
   has_attached_file :post_process_attachment
   
@@ -68,7 +68,7 @@ class Recipe < ActiveRecord::Base
     ######################################################################
         
     # If the attachment is a pdf, the first thing I have to do is convert it to a JPG.  This will be the intermediate attachment
-    if /\.pdf$/i.match(original_attachment.path)
+    if original_attachment_content_type == "application/pdf"
       system_command = 'convert -density ' + convert_density_setting + ' ' + original_attachment.path + ' -depth ' + convert_depth_setting + ' -append ' + convert_output_dir_name + '/' + convert_output_file_name + '.' + convert_output_file_ext
       Delayed::Worker.logger.debug "********** system command is: #{system_command}"
 
@@ -129,7 +129,7 @@ class Recipe < ActiveRecord::Base
     #                                                                    #
     ######################################################################
     
-    # Input file should now be a JPG regardless of the original file type.
+    # Input file should now be an image regardless of the original file type.
     system_command = 'tesseract ' + tesseract_input_file  + ' ' + tesseract_output_dir_name + '/' + tesseract_output_file_name
     Delayed::Worker.logger.debug "********** system command is: #{system_command}"
     

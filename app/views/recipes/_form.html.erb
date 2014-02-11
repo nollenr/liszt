@@ -5,6 +5,18 @@
     <%= f.input :name, label: 'Recipe Name' %>
     <%= f.input :recipe_source, label: 'Where did you get this recipe?' %>
     <%= f.file_field :original_attachment %>
+    <% unless @recipe.id.nil? %>
+      <% unless @recipe.original_attachment_file_name.nil? %>
+        <% if @recipe.original_attachment_content_type == "application/pdf"%>
+          <p><%= @recipe.original_attachment.path %></p>
+          <%# http://stackoverflow.com/questions/291813/recommended-way-to-embed-pdf-in-html %>
+          <iframe width="100%" height="500" src="<%= @recipe.original_attachment.url %>"></iframe>
+        <% end %>
+        <%# elsif @recipe.original_attachment_content_type == "" %>
+        <%#= image_tag @recipe.original_attachment.path %>
+      <% end %>
+      <%= f.input :attachment_as_text, as: :text %>
+    <% end %>
   </div>
 
   <div class="form-actions">
