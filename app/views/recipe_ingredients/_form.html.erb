@@ -1,0 +1,17 @@
+<%= simple_form_for(@recipe_ingredient) do |f| %>
+  <%= f.error_notification %>
+
+  <%= @recipe.attachment_as_text %>
+
+  <div class="form-inputs">
+    <%= f.input :quantity %>
+    <%= f.input :ingredient %>
+    <%= f.input :additional_instructions %>
+  </div>
+
+  <button type="button" class="btn btn-primary" id="geningredient">Create Ingredient</button>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

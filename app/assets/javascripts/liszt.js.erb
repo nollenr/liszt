@@ -1,0 +1,27 @@
+// Get user selection text on page
+function getSelectedText() {
+    if (window.getSelection) {
+        return window.getSelection();
+    } else if (document.selection) {
+        return document.selection.createRange().text;
+    }
+    return '';
+}
+
+function findquantity(line) {
+  var regexpression = /^\s*(\d+)\s*(\d+\/\d+)?/
+  console.log("Incoming line is " + line);
+  regexpvalues = regexpression.exec(line);
+  console.log("regexpvalues are: " + regexpvalues)
+}
+
+$(function() {
+
+  // Add an event handler a button just to test that the js/jquery is working
+  $("#geningredient").click(function() {
+    console.log("Clicked on the button!");
+    console.log(getSelectedText());
+    findquantity(getSelectedText());
+  });
+
+});

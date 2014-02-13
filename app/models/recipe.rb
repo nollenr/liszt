@@ -6,6 +6,7 @@ class Recipe < ActiveRecord::Base
   include RecipesHelper
   
   belongs_to :user
+  has_many :recipe_ingredients
   
   has_attached_file :original_attachment, :styles => { :thumbnail => "150x150>" }
   has_attached_file :intermediate_process_attachment
