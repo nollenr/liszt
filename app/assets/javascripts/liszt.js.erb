@@ -8,20 +8,96 @@ function getSelectedText() {
     return '';
 }
 
-function findquantity(line) {
-  var regexpression = /^\s*(\d+)\s*(\d+\/\d+)?/
-  console.log("Incoming line is " + line);
-  regexpvalues = regexpression.exec(line);
-  console.log("regexpvalues are: " + regexpvalues)
+function findStandardQTYandUOM(textLine){
+  // I need to get this list from the database... there's a gem that will help me do that
+  var stdUnits = ["tsp", "tblsp", "teaspoon", "tablespoon", "cup", "c", "oz", "ounce", "drop", "lb", "pound", "stick", "pinch", "quart", "qt", "gallon", "pint", "pt"];
+  
+  // Loop through all of the items in the array stdUnits
+  for (var i=0; i < stdUnits.length; i++){
+    // console.log(stdUnits[i]);
+    // zero or more spaces followed by one or more digits
+    //    followed by one or more spaces and (followed by one or more digits followed by '/' followed by one or more digits) zero or 1 times
+    //   or
+    //    followed by a '/' followed by one or more digits 
+    // followed by zero or more spaces followed by a standard unit of measure followed by an 's' optionally.
+    var quantityAndUOM = '^\\s*((\\d+)((\\s+\\d+\\/\\d+)?|\\/\\d+))\\s*(' + stdUnits[i] + "s?\\b)";
+    var re = new RegExp(quantityAndUOM);
+    var found = textLine.match(re, "i");
+    if (found){
+      // console.log("found " + found[0] + "  quantity is: " + found[1] + "  UOM is: " + found[found.length-1]);
+      // remove the quantity and unit-of-measure from the line, remove leading and trailing spaces
+      textLine = textLine.replace(found[0],"").trim();
+      // return an array containing the remaining text (after the qty and uom is removed), the quantity and UOM
+      return ([textLine, found[1], found[found.length-1]]);
+      break;
+    } else {
+      // console.log("did not find anything.");
+    };
+  };
+  return null;
+}
+
+function findCasedQTYandUOM(textLine){
+  var caseSensativeUnits = ["t", "T"];
+  
+  for (var i=0; i < caseSensativeUnits.length; i++){
+    var quantityAndUOM = '^\\s*((\\d+)((\\s+\\d+\\/\\d+)?|\\/\\d+))\\s*(' + caseSensativeUnits[i] + "s?\\.?\\s+)";
+    var re = new RegExp(quantityAndUOM);
+    var found = textLine.match(re);
+    if (found) {
+      console.log("found " + found[0] + "  quantity is: " + found[1] + "  UOM is: " + found[found.length-1]);
+      textLine = textLine.replace(found[0],"").trim();
+      return ([textLine, found[1], found[found.length-1]]);
+      break;
+    } // end if found
+  }; // end array for loop
+  return null;
+}
+
+function findNonStandardQTYandUOM(textLine){
+  var regexpHash = {
+    egg : '\\s*(\\d+)\\s+((?:(?:large)\\s+|(?:small)\\s+|(?:medium)\\s+)?(?:egg)s?(?:\\s+(?:whites?))?)',
+    celery : '\\s*(\\d+)\\s+((?:(?:large)\\s+|(?:small)\\s+|(?:medium)\\s+)?(?:stalks?(?:\\s+of)?)?\\s+celery)',
+    leek : '\\s*(\\d+)\\s+((?:(?:large)\\s+|(?:small)\\s+|(?:medium)\\s+)?(?:stalks?(?:\\s+of)?)?\\s+(?:leek|leak)s?)',
+    carrot : '\\s*(\\d+)\\s+((?:(?:large)\\s+|(?:small)\\s+|(?:medium)\\s+)?(?:bunch(?:es)?)?\\s*carrots?)',
+    garlic : '\\s*(\\d+)\\s+((?:(?:large)\\s+|(?:small)\\s+|(?:medium)\\s+)?(?:cloves?(?:\\s+of\\s+)?)?\\s*garlic(?:\\s+cloves?)?)'
+  }; //
+  var keys = Object.keys(regexpHash);
+  // console.log(keys);
+  for (var i=0; i< keys.length; i++) {
+    var re = new RegExp(regexpHash[keys[i]], "i");
+    var found = textLine.match(re);
+    if (found) {
+      console.log("found " + found[0] + "  quantity is: " + found[1] + " ingredient is: " + found[2]);
+      textLine = textLine.replace(found[0],"").trim();
+      return ([textLine, found[1], found[2]])
+   }// end if found
+  } //end keys array for loop
 }
 
 $(function() {
 
   // Add an event handler a button just to test that the js/jquery is working
   $("#geningredient").click(function() {
-    console.log("Clicked on the button!");
-    console.log(getSelectedText());
-    findquantity(getSelectedText());
+    // convert the "selection" type to a string and remove beginning and ending spaces
+    var selectedText = getSelectedText().toString().trim();
+    // console.log(selectedText);
+    var parsedArray = findStandardQTYandUOM(selectedText);
+    // check for the standard qty/uom string
+    if (parsedArray){
+      console.log("Remaining text: " + parsedArray[0] + " Qty: " + parsedArray[1] + " UOM: " + parsedArray[2]);
+    } else {
+      // check for the case sensative qty/uom
+      console.log("No quantity/UOM Found");
+      var parsedArray = findCasedQTYandUOM(selectedText);
+      if (parsedArray){
+        console.log("Remaining text: " + parsedArray[0] + " Qty: " + parsedArray[1] + " UOM: " + parsedArray[2]);
+      } else {
+        console.log("No case sensative quantity/UOM Found");
+        // this one is different... it returns the textLine, QTY and ingredient (ex: 1 egg white)
+        var parsedArray = findNonStandardQTYandUOM(selectedText);
+      }
+    };
   });
 
 });

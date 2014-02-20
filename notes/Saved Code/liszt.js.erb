@@ -1,0 +1,66 @@
+// Get user selection text on page
+function getSelectedText() {
+    if (window.getSelection) {
+        return window.getSelection();
+    } else if (document.selection) {
+        return document.selection.createRange().text;
+    }
+    return '';
+}
+
+function findquantity(selectedText) {
+  var alternateQuantity;
+  var alternateUOM;
+  var regexpQuantity = /^\s*(\d+)\s*(\d+\/\d+)?/;  //regexp to find the quantity
+  
+  var caseSensativeUnits = ["t", "T"];
+  var stdUnits = ["tsp", "tblsp", "teaspoon", "tablespoon", "cup", "oz", "ounce", "drop", "lb", "pound", "stick", "pinch"];
+  
+  var line = selectedText.toString();  //change the input type to a string
+  var line = line.replace(/\s{2,}/g, ' ');
+  
+  var regexpParen = /\(.+\)/;
+  var regexpvalues = regexpParen.exec(line);
+  console.log(regexpvalues);
+  if (regexpvalues){
+    line = line.replace(regexpvalues[0], "");  // remove the paren string from the line
+    regexpvalues[0] = regexpvalues[0].replace("(", "");
+    regexpvalues[0] = regexpvalues[0].replace(")", "");
+    // try to determine what's in the parens... is it an alternate quantity and alternate UOM
+    // or something that needs to be added to the additional instructions?
+    console.log("regexpvalues: " + regexpvalues[0]);
+    var altregexpvalues = regexpQuantity.exec(regexpvalues[0]);
+    if (altregexpvalues) {
+      console.log("Looks like I've found an alternate quantity: " + altregexpvalues[0]);
+    } else {
+      console.log("Looks like I've found some additional instructions");
+    }
+  }
+  
+  regexpvalues = regexpQuantity.exec(line);
+  console.log("regexpvalues[0] are: " + regexpvalues[0]);
+  var quantity = regexpvalues[0];
+  
+  line = line.replace(regexpvalues[0], "");  //remove the quantity from the string
+  line = line.trim();
+  console.log("Modified line is " + line);
+  
+  var res = line.split(/\s+/);
+  var uomCandidate = res[0].replace(/s$/, "");
+  if (stdUnits.indexOf(uomCandidate) >= 0){
+    console.log("Found the UOM: " + res[0]);
+    line = line.replace(res[0], "");
+  }
+  // WHAT IF NO UOM COULD BE FOUND?
+  console.log(line);
+}
+
+$(function() {
+
+  // Add an event handler a button just to test that the js/jquery is working
+  $("#geningredient").click(function() {
+    console.log(getSelectedText());
+    findquantity(getSelectedText());
+  });
+
+});
